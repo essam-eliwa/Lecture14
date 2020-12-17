@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../models/product.dart';
 import './product.dart';
 
 class Products with ChangeNotifier {
-  List<Product> _items = [
-    Product(
+  List<Product> _items = [];
+/*     Product(
       id: 'p1',
       title: 'Red Shirt',
       description: 'A red shirt - it is pretty red!',
@@ -36,8 +37,8 @@ class Products with ChangeNotifier {
       price: 49.99,
       imageUrl:
           'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-    ),
-  ];
+    ), 
+  ];*/
 
   List<Product> get items {
     return [..._items];
@@ -57,6 +58,20 @@ class Products with ChangeNotifier {
     try {
       final response = await http.get(url);
       print(json.decode(response.body));
+      final dbData = json.decode(response.body) as Map<String, dynamic>;
+      final List<Product> dbProducts = [];
+      dbData.forEach((key, data) {
+        dbProducts.add(Product(
+          id: key,
+          title: data['title'],
+          description: data['description'],
+          price: data['price'],
+          imageUrl: data['imageUrl'],
+          isFavorite: data['isFavorite'],
+        ));
+      });
+      _items = dbProducts;
+      notifyListeners();
     } on Exception catch (e) {
       print(e.toString());
       throw (e);
