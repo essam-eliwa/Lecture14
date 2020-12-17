@@ -1,10 +1,8 @@
-# lec14_shop
+# CSC422-lec14_shop
 
-A new Flutter project.
+A Flutter project for simple shop with firebase backend.
 
 ## Getting Started
-
-This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
 
