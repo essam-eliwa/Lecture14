@@ -78,17 +78,17 @@ class Products with ChangeNotifier {
     }
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) async {
     //essam@miu: https://console.firebase.google.com/u/0/project/csc422-rldb/database/csc422-rldb-default-rtdb/data
     const url = 'https://csc422-rldb-default-rtdb.firebaseio.com/products.json';
     //'https://csc422-f20-lec12-default-rtdb.firebaseio.com/products.json';
     //https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg
-    http
+    return http
         .post(url,
             body: json.encode({
               'title': product.title,
               'imageUrl': product.imageUrl,
-              'describtion': product.description,
+              'description': product.description,
               'price': product.price,
               'isFavorite': product.isFavorite,
             }))
@@ -106,16 +106,43 @@ class Products with ChangeNotifier {
     });
   }
 
-  void updateProduct(String id, Product newProduct) {
+  Future<void> updateProduct(String id, Product newProduct) async {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
+      final url =
+          'https://csc422-rldb-default-rtdb.firebaseio.com/products/$id.json';
+      http.patch(url,
+          body: json.encode({
+            'title': newProduct.title,
+            'description': newProduct.description,
+            'price': newProduct.price,
+            'imageUrl': newProduct.imageUrl,
+          }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     }
   }
+  /*void updateProduct(String id, Product newProduct) {
+    final prodIndex = _items.indexWhere((prod) => prod.id == id);
+    if (prodIndex >= 0) {
+
+      _items[prodIndex] = newProduct;
+      notifyListeners();
+    }
+  }*/
 
   void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+    final url =
+        'https://csc422-rldb-default-rtdb.firebaseio.com/products/$id.json';
+    final existingInd = _items.indexWhere((element) => element.id == id);
+    var existing = _items[existingInd];
+    items.removeAt(existingInd);
+    http.delete(url).then((_) {
+      existing = null;
+    }).catchError((error) {
+      _items.insert(existingInd, existing);
+    });
+    //_items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 }
