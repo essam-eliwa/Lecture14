@@ -52,12 +52,12 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  /////
+  /////lecture 14
   Future<void> fetchAndSetProducts() async {
     const url = 'https://csc422-rldb-default-rtdb.firebaseio.com/products.json';
     try {
       final response = await http.get(url);
-      print(json.decode(response.body));
+      //print(json.decode(response.body));
       final dbData = json.decode(response.body) as Map<String, dynamic>;
       final List<Product> dbProducts = [];
       dbData.forEach((key, data) {

@@ -29,9 +29,21 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     // Future.delayed(Duration.zero).then((value) {
     //   Provider.of<Products>(context).fetchAndSetProducts();
     // });
+    /////
+    setState(() {
+      _isLoading = true;
+    });
+    Provider.of<Products>(context, listen: false)
+        .fetchAndSetProducts()
+        .then((_) {
+      setState(() {
+        _isLoading = false;
+      });
+    });
     super.initState();
   }
 
+/*
   @override
   void didChangeDependencies() {
     if (_isInit) {
@@ -47,7 +59,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
     _isInit = false;
     super.didChangeDependencies();
   }
-
+*/
   @override
   Widget build(BuildContext context) {
     return Scaffold(
