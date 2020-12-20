@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/product.dart';
 import './product.dart';
+import '../models/HTTPException.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [];
@@ -78,6 +79,7 @@ class Products with ChangeNotifier {
     }
   }
 
+//'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg'
   Future<void> addProduct(Product product) async {
     //essam@miu: https://console.firebase.google.com/u/0/project/csc422-rldb/database/csc422-rldb-default-rtdb/data
     const url = 'https://csc422-rldb-default-rtdb.firebaseio.com/products.json';
@@ -107,42 +109,37 @@ class Products with ChangeNotifier {
   }
 
   Future<void> updateProduct(String id, Product newProduct) async {
+    final url =
+        'https://csc422-rldb-default-rtdb.firebaseio.com/products/$id.json';
+
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
-      final url =
-          'https://csc422-rldb-default-rtdb.firebaseio.com/products/$id.json';
-      http.patch(url,
+      await http.patch(url,
           body: json.encode({
             'title': newProduct.title,
-            'description': newProduct.description,
             'price': newProduct.price,
             'imageUrl': newProduct.imageUrl,
+            'description': newProduct.description,
           }));
       _items[prodIndex] = newProduct;
       notifyListeners();
     }
   }
-  /*void updateProduct(String id, Product newProduct) {
-    final prodIndex = _items.indexWhere((prod) => prod.id == id);
-    if (prodIndex >= 0) {
-
-      _items[prodIndex] = newProduct;
-      notifyListeners();
-    }
-  }*/
 
   void deleteProduct(String id) {
     final url =
         'https://csc422-rldb-default-rtdb.firebaseio.com/products/$id.json';
     final existingInd = _items.indexWhere((element) => element.id == id);
     var existing = _items[existingInd];
-    items.removeAt(existingInd);
-    http.delete(url).then((_) {
-      existing = null;
-    }).catchError((error) {
-      _items.insert(existingInd, existing);
+    _items.removeAt(existingInd);
+    http.delete(url).then((res) {
+      if (res.statusCode >= 400) {
+        _items.insert(existingInd, existing);
+        notifyListeners();
+        print(res.statusCode);
+        throw HTTPException('Delete Failid for id is $id');
+      }
     });
-    //_items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 }

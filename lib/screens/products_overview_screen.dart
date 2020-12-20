@@ -20,19 +20,21 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorites = false;
-  var _isInit = true;
-  var _isLoading = false;
+  //var _isInit = true;
+  var _isLoading = true;
 //////
   @override
   void initState() {
     //Provider.of<Products>(context).fetchAndSetProducts();
-    // Future.delayed(Duration.zero).then((value) {
-    //   Provider.of<Products>(context).fetchAndSetProducts();
-    // });
+    //Future.delayed(Duration.zero).then((value) {
+    //  Provider.of<Products>(context).fetchAndSetProducts();
+    //});
     /////
+    ///
+    /*
     setState(() {
       _isLoading = true;
-    });
+    });*/
     Provider.of<Products>(context, listen: false)
         .fetchAndSetProducts()
         .then((_) {
@@ -62,6 +64,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 */
   @override
   Widget build(BuildContext context) {
+    //Provider.of<Products>(context).fetchAndSetProducts();
     return Scaffold(
       appBar: AppBar(
         title: Text('MyShop'),
